@@ -1,0 +1,13 @@
+#EXTM3U
+#EXTINF:-1 group-title="Pakistan",Channel 1
+https://arynews.aryzap.com/fd4f11882839366985e179ecf727dfb2/69b7e084/v1/0183ea205add0b8ed5941a38bc6f/0183ea20909b0b8ed5aa4d793456/main.m3u8?uuid=0a7dd950-a933-495b-81f0-3ca4c2dabdfa
+#EXTINF:-1 group-title="Pakistan",Channel 2
+https://arydigital.aryzap.com/687e64c1fe6924c740d61654df1f99a0/69b7e072/v1/0183ea2408f90b8ed5941a38bc72/0183ea24302d0b8ed5941a38bc75/main.m3u8?uuid=818beb32-77c9-47c2-baed-829e172442bd
+#EXTINF:-1 group-title="Pakistan",Channel 3
+https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/chunks.m3u8
+#EXTINF:-1 group-title="Pakistan",Channel 4
+https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/playlist.m3u8
+#EXTINF:-1 group-title="Pakistan",Channel 5
+https://arynews.aryzap.com/fd4f11882839366985e179ecf727dfb2/69b7e084/v1/0183ea205add0b8ed5941a38bc6f/0183ea20909b0b8ed5aa4d793456/ARYNewsH264_480p.m3u8?uuid=0a7dd950-a933-495b-81f0-3ca4c2dabdfa&isSubM3u8=1
+#EXTINF:-1 group-title="Pakistan",Channel 6
+https://arydigital.aryzap.com/687e64c1fe6924c740d61654df1f99a0/69b7e072/v1/0183ea2408f90b8ed5941a38bc72/0183ea24302d0b8ed5941a38bc75/ARYDigitalHDh264_480p.m3u8?uuid=818beb32-77c9-47c2-baed-829e172442bd&isSubM3u8=1
