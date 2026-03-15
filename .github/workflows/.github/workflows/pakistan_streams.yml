@@ -1,8 +1,8 @@
-name: Build Pakistan Cloudflare IPTV Playlist
+name: Build Pakistan IPTV Playlist
 
 on:
   schedule:
-    - cron: "0 3 * * *"   # runs daily
+    - cron: "0 */6 * * *"   # every 6 hours
   workflow_dispatch:
 
 jobs:
@@ -12,8 +12,11 @@ jobs:
 
     steps:
 
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v3
+
+      - name: Install Chrome
+        uses: browser-actions/setup-chrome@v1
 
       - name: Setup Python
         uses: actions/setup-python@v4
@@ -22,16 +25,16 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install requests
+          pip install selenium webdriver-manager
 
-      - name: Run scanner
+      - name: Run stream scanner
         run: |
-          python cloudflare_scanner.py
+          python pakistan_stream_scanner.py
 
       - name: Commit playlist
         run: |
           git config --global user.name "iptv-bot"
           git config --global user.email "bot@github.com"
           git add playlist/
-          git commit -m "Update Pakistan Cloudflare playlist" || echo "No changes"
+          git commit -m "Update Pakistan streams" || echo "No changes"
           git push
