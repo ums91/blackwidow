@@ -1,6 +1,5 @@
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 import json
 import time
@@ -14,56 +13,33 @@ channels = {
     "ARY News": "https://live.arynews.tv",
     "Geo News": "https://live.geo.tv",
     "Samaa News": "https://www.samaa.tv/live",
-    "Aaj News": "https://www.aaj.tv/live",
+    "Aaj News": "https://www.aaj.tv/live"
 }
 
 def clean_url(url):
     return re.split(r'\.m3u8', url)[0] + ".m3u8"
 
-def test_stream(url):
+def is_valid_stream(url):
     try:
         r = requests.get(url, timeout=10)
 
         if r.status_code != 200:
-            return None
+            return False
 
-        if "#EXT-X-STREAM-INF" in r.text:
-            return "master"
-
-        if "#EXTINF" in r.text:
-            return "variant"
+        if "#EXTM3U" in r.text:
+            return True
 
     except:
         pass
 
-    return None
-
-
-def click_play(driver):
-
-    selectors = [
-        "button",
-        ".vjs-big-play-button",
-        ".jw-icon-play",
-        ".ytp-large-play-button",
-        "[aria-label='Play']"
-    ]
-
-    for sel in selectors:
-
-        try:
-            btn = driver.find_element(By.CSS_SELECTOR, sel)
-            btn.click()
-            print("Play button clicked")
-            return
-        except:
-            pass
+    return False
 
 
 options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
+
 options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
 driver = webdriver.Chrome(
@@ -79,47 +55,36 @@ for name, page in channels.items():
 
     driver.get(page)
 
-    time.sleep(5)
+    time.sleep(15)
 
-    # try clicking play
-    click_play(driver)
+    logs = driver.get_log("performance")
 
-    candidates = set()
+    candidates = []
 
-    for _ in range(3):
+    for entry in logs:
 
-        time.sleep(10)
+        msg = json.loads(entry["message"])["message"]
 
-        logs = driver.get_log("performance")
+        if msg["method"] != "Network.requestWillBeSent":
+            continue
 
-        for entry in logs:
+        url = msg["params"]["request"]["url"]
 
-            msg = json.loads(entry["message"])["message"]
+        if ".m3u8" in url:
 
-            if msg["method"] != "Network.requestWillBeSent":
-                continue
+            clean = clean_url(url)
 
-            url = msg["params"]["request"]["url"]
+            if clean not in candidates:
+                candidates.append(clean)
 
-            if ".m3u8" in url:
-
-                candidates.add(clean_url(url))
-
-    master = None
-    fallback = None
-
+    # test each candidate
     for c in candidates:
 
-        result = test_stream(c)
+        if is_valid_stream(c):
 
-        if result == "master":
-            master = c
+            streams[name] = c
+            print("Working:", c)
             break
-
-        elif result == "variant" and not fallback:
-            fallback = c
-
-    streams[name] = master or fallback
 
 driver.quit()
 
@@ -129,11 +94,9 @@ with open("playlist/pakistan.m3u","w") as f:
 
     f.write("#EXTM3U\n")
 
-    for name, stream in streams.items():
+    for name, url in streams.items():
 
-        if stream:
-
-            f.write(f'#EXTINF:-1 group-title="Pakistan",{name}\n')
-            f.write(stream + "\n")
+        f.write(f'#EXTINF:-1 group-title="Pakistan",{name}\n')
+        f.write(url + "\n")
 
 print("Channels captured:", len(streams))
