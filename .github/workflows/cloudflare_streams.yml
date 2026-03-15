@@ -1,0 +1,37 @@
+name: Build Pakistan Cloudflare IPTV Playlist
+
+on:
+  schedule:
+    - cron: "0 3 * * *"   # runs daily
+  workflow_dispatch:
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install requests
+
+      - name: Run scanner
+        run: |
+          python cloudflare_scanner.py
+
+      - name: Commit playlist
+        run: |
+          git config --global user.name "iptv-bot"
+          git config --global user.email "bot@github.com"
+          git add playlist/
+          git commit -m "Update Pakistan Cloudflare playlist" || echo "No changes"
+          git push
