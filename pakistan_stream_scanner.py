@@ -19,8 +19,32 @@ channels = {
 def clean_url(url):
     return re.split(r'\.m3u8', url)[0] + ".m3u8"
 
-def is_valid_stream(url):
+
+def derive_master(url):
+    """
+    Try to convert variant playlist into master playlist
+    """
+    if "cloudflarestream.com" in url:
+
+        parts = url.split("/")
+
+        if "manifest" in parts:
+
+            idx = parts.index("manifest")
+
+            video_id = parts[idx - 1]
+
+            master = f"https://{parts[2]}/{video_id}/manifest/video.m3u8"
+
+            return master
+
+    return None
+
+
+def test_stream(url):
+
     try:
+
         r = requests.get(url, timeout=10)
 
         if r.status_code != 200:
@@ -39,7 +63,6 @@ options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-
 options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
 driver = webdriver.Chrome(
@@ -55,11 +78,11 @@ for name, page in channels.items():
 
     driver.get(page)
 
-    time.sleep(15)
+    time.sleep(10)
 
     logs = driver.get_log("performance")
 
-    candidates = []
+    candidates = set()
 
     for entry in logs:
 
@@ -71,19 +94,23 @@ for name, page in channels.items():
         url = msg["params"]["request"]["url"]
 
         if ".m3u8" in url:
+            candidates.add(clean_url(url))
 
-            clean = clean_url(url)
-
-            if clean not in candidates:
-                candidates.append(clean)
-
-    # test each candidate
     for c in candidates:
 
-        if is_valid_stream(c):
+        # try derived master first
+        master = derive_master(c)
+
+        if master and test_stream(master):
+
+            streams[name] = master
+            print("Master stream:", master)
+            break
+
+        if test_stream(c):
 
             streams[name] = c
-            print("Working:", c)
+            print("Variant stream:", c)
             break
 
 driver.quit()
