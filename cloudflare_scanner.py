@@ -3,7 +3,10 @@ import requests
 import os
 
 pages = [
-    "https://ptvsportshd.com/live"
+    "https://ptvsportshd.com/live",
+    "https://live.arydigital.tv",
+    "https://live.arynews.tv",
+    "https://live.geo.tv"
 ]
 
 pattern = r"[a-f0-9]{32}"
