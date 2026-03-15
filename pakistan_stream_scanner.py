@@ -5,8 +5,8 @@ from webdriver_manager.chrome import ChromeDriverManager
 import json
 import time
 import os
-import re
 import requests
+
 
 channels = {
     "PTV Sports": "https://ptvsportshd.com/live",
@@ -16,17 +16,6 @@ channels = {
     "Samaa News": "https://www.samaa.tv/live",
     "Aaj News": "https://www.aaj.tv/live"
 }
-
-cdn_candidates = {
-    "Geo News": "https://live.geo.tv/geonews/index.m3u8",
-    "Aaj News": "https://stream.aaj.tv/aajnews/aajnews/index.m3u8",
-    "Samaa News": "https://stream.samaa.tv/samaa/samaa3/index.m3u8",
-    "PTV News": "https://live.ptv.com.pk/PTVNewsHD/index.m3u8",
-    "PTV World": "https://live.ptv.com.pk/PTVWorldHD/index.m3u8",
-}
-
-def clean_url(url):
-    return re.split(r'\.m3u8', url)[0] + ".m3u8"
 
 
 def test_stream(url):
@@ -38,7 +27,7 @@ def test_stream(url):
         if r.status_code != 200:
             return False
 
-        if "#EXTM3U" in r.text:
+        if "#EXTM3U" in r.text or "#EXTINF" in r.text:
             return True
 
     except:
@@ -47,42 +36,34 @@ def test_stream(url):
     return False
 
 
-def derive_cloudflare_master(url):
+def get_iframe_sources(driver):
 
-    if "cloudflarestream.com" in url:
-
-        parts = url.split("/")
-
-        if "manifest" in parts:
-
-            idx = parts.index("manifest")
-
-            video_id = parts[idx - 1]
-
-            return f"https://{parts[2]}/{video_id}/manifest/video.m3u8"
-
-    return None
-
-
-def switch_iframe(driver):
+    sources = []
 
     try:
+
         iframes = driver.find_elements(By.TAG_NAME, "iframe")
 
         for frame in iframes:
-            driver.switch_to.frame(frame)
-            return True
+
+            src = frame.get_attribute("src")
+
+            if src:
+                sources.append(src)
+
     except:
         pass
 
-    return False
+    return sources
 
 
 options = webdriver.ChromeOptions()
 options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
+
 options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
 
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
@@ -91,65 +72,66 @@ driver = webdriver.Chrome(
 
 streams = {}
 
-# ---- Selenium scanning ----
+
 for name, page in channels.items():
 
-    print("Scanning page:", name)
+    print("Scanning:", name)
 
     driver.get(page)
 
     time.sleep(8)
 
-    switch_iframe(driver)
+    targets = [page]
 
-    candidates = set()
+    # detect iframe players
+    targets += get_iframe_sources(driver)
 
-    for _ in range(3):
+    found_stream = None
 
-        logs = driver.get_log("performance")
+    for target in targets:
 
-        for entry in logs:
+        try:
 
-            msg = json.loads(entry["message"])["message"]
+            driver.get(target)
 
-            if msg["method"] != "Network.requestWillBeSent":
-                continue
+            time.sleep(8)
 
-            url = msg["params"]["request"]["url"]
+            logs = driver.get_log("performance")
 
-            if ".m3u8" in url:
+            for entry in logs:
 
-                candidates.add(clean_url(url))
+                msg = json.loads(entry["message"])["message"]
 
-        time.sleep(5)
+                if msg["method"] != "Network.requestWillBeSent":
+                    continue
 
-    for c in candidates:
+                url = msg["params"]["request"]["url"]
 
-        master = derive_cloudflare_master(c)
+                if ".m3u8" in url:
 
-        if master and test_stream(master):
+                    if test_stream(url):
 
-            streams[name] = master
-            break
+                        found_stream = url
+                        break
 
-        if test_stream(c):
+            if found_stream:
+                break
 
-            streams[name] = c
-            break
+        except:
+            pass
+
+    if found_stream:
+
+        streams[name] = found_stream
+
+        print("Found:", found_stream)
+
+    else:
+
+        print("No stream detected")
 
 
 driver.quit()
-
-# ---- CDN discovery ----
-for name, url in cdn_candidates.items():
-
-    if name not in streams:
-
-        if test_stream(url):
-
-            streams[name] = url
-
-            print("CDN stream found:", name)
 
 
 os.makedirs("playlist", exist_ok=True)
@@ -161,7 +143,8 @@ with open("playlist/pakistan.m3u", "w") as f:
     for name, url in streams.items():
 
         f.write(f'#EXTINF:-1 group-title="Pakistan",{name}\n')
+
         f.write(url + "\n")
 
 
-print("Total channels:", len(streams))
+print("Channels captured:", len(streams))
