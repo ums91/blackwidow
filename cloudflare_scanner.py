@@ -6,6 +6,7 @@ pages = [
     "https://ptvsportshd.com/live",
     "https://live.arydigital.tv",
     "https://live.arynews.tv",
+    "https://live.aryqtv.tv",
     "https://live.geo.tv"
 ]
 
