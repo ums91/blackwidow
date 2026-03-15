@@ -1,5 +1,3 @@
 #EXTM3U
 #EXTINF:-1 group-title="Pakistan",Geo News
-https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/chunks.m3u8
-#EXTINF:-1 group-title="Pakistan",Samaa News
-https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/chunks.m3u8
+https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/playlist.m3u8
