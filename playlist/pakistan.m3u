@@ -13,10 +13,18 @@ https://imob.dunyanews.tv/livehd/_definst_/ngrp:dunyalivehd_2_all/playlist.m3u8
 https://jk3lz82elw79-hls-live.5centscdn.com/harPalGeo/955ad3298db330b5ee880c2c9e6f23a0.sdp/playlist.m3u8
 #EXTINF:-1 group-title="Pakistan",Madani Channel
 https://jk3lz82elw79-hls-live.5centscdn.com/harPalGeo/955ad3298db330b5ee880c2c9e6f23a0.sdp/playlist.m3u8
-#EXTINF:-1 group-title="Pakistan | Islamic",PTV Sports
-https://customer-jfpjrgh1mi5y63cd.cloudflarestream.com/c4ba0d95cea3149178946b74b1a8677b/manifest/video.m3u8
-#EXTINF:-1 group-title="Pakistan",Geo News
-https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/playlist.m3u8
+
+#EXTINF:-1 group-title="Pakistan",ARY Digital
+#EXTVLCOPT:http-referrer=https://live.arydigital.tv
+#EXTVLCOPT:http-user-agent=Mozilla/5.0
+https://arydigital.aryzap.com/635eca4ff775733afc9c43a2d69301d6/69b833ab/v1/0183ea2408f90b8ed5941a38bc72/0183ea24302d0b8ed5941a38bc75/main.m3u8
+
 #EXTINF:-1 group-title="Pakistan",ARY News
 #EXTVLCOPT:http-referrer=https://live.arynews.tv
+#EXTVLCOPT:http-user-agent=Mozilla/5.0
 https://arynews.aryzap.com/ea65b565a60c2a137faf9775d139bb15/69b83464/v1/0183ea205add0b8ed5941a38bc6f/0183ea20909b0b8ed5aa4d793456/main.m3u8
+
+#EXTINF:-1 group-title="Pakistan",ARY Qtv
+#EXTVLCOPT:http-referrer=https://live.aryqtv.tv
+#EXTVLCOPT:http-user-agent=Mozilla/5.0
+https://aryqtv.aryzap.com/9f9a6d1170484f3f0a3264d622737f86/69b83155/v1/0183ea2a0eec0b8ed5941a38bc76/0183ea2a4e470b8ed5aa4d793457/main.m3u8
