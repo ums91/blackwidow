@@ -6,6 +6,7 @@ import json
 import time
 import os
 import requests
+import re
 
 
 channels = {
@@ -23,10 +24,6 @@ channels = {
     "Bol News": "https://www.bolnetwork.com/live",
     "Express News": "https://express.pk/live",
     "Harpal Geo": "https://harpalgeo.tv/live",
-    "PTV News": "https://ptv.com.pk/ptvnews/livestream",
-    "PTV Home": "https://ptv.com.pk/ptvhome/livestream",
-    "PTV World": "https://ptv.com.pk/ptvworld/livestream",
-    "PTV Sports Alt": "https://ptv.com.pk/ptvsports/livestream",
     "Madani Channel": "https://madani.tv/live",
     "Khyber News": "https://khybernews.tv/live",
     "Sindh TV": "https://sindhtv.tv/live",
@@ -34,21 +31,13 @@ channels = {
     "Pashto 1": "https://pashto1.tv/live",
     "City42": "https://city42.tv/live",
     "City41": "https://city41.tv/live",
-    "City21": "https://city21.tv/live",
-    "Capital TV": "https://capitaltv.pk/live",
-    "Apna TV": "https://apna.tv/live",
-    "Kay2 TV": "https://kay2.tv/live",
-    "8XM": "https://8xm.tv/live",
-    "KTN": "https://ktn.tv/live",
-    "Awaz TV": "https://awaz.tv/live",
-    "Waseb TV": "https://waseb.tv/live"
+    "City21": "https://city21.tv/live"
 }
 
 
 def test_stream(url):
 
     try:
-
         r = requests.get(url, timeout=10)
 
         if r.status_code != 200:
@@ -68,7 +57,6 @@ def get_iframe_sources(driver):
     sources = []
 
     try:
-
         iframes = driver.find_elements(By.TAG_NAME, "iframe")
 
         for frame in iframes:
@@ -82,6 +70,49 @@ def get_iframe_sources(driver):
         pass
 
     return sources
+
+
+def extract_m3u8_from_source(driver):
+
+    urls = set()
+
+    try:
+
+        source = driver.page_source
+
+        matches = re.findall(r'https?://[^"]+\.m3u8[^"]*', source)
+
+        for m in matches:
+            urls.add(m)
+
+    except:
+        pass
+
+    return list(urls)
+
+
+def generate_cdn_candidates():
+
+    slugs = [
+        "geonews","harpalgeo","arynews","arydigital","aryqtv",
+        "humtv","humnews","dunyanews","expressnews","bolnews",
+        "aajnews","samaanews","92news"
+    ]
+
+    patterns = [
+        "https://cdn-live.streamlock.net/{}/{}/playlist.m3u8",
+        "https://5centscdn.streamlock.net/{}/{}/playlist.m3u8",
+        "https://cdn-live.streamlock.net/{}/{}/index.m3u8",
+        "https://5centscdn.streamlock.net/{}/{}/index.m3u8"
+    ]
+
+    urls = []
+
+    for slug in slugs:
+        for p in patterns:
+            urls.append(p.format(slug, slug))
+
+    return urls
 
 
 options = webdriver.ChromeOptions()
@@ -100,56 +131,87 @@ driver = webdriver.Chrome(
 streams = {}
 
 
+# -------------------
+# Website scanning
+# -------------------
+
 for name, page in channels.items():
 
     print("Scanning:", name)
 
-    driver.get(page)
+    try:
+        driver.get(page)
+    except:
+        print("Page unreachable")
+        continue
 
-    time.sleep(20)
-
-    targets = [page]
-
-    targets += get_iframe_sources(driver)
+    time.sleep(12)
 
     found_stream = None
 
-    for target in targets:
+    # Source scan
+    source_streams = extract_m3u8_from_source(driver)
 
-        try:
+    for s in source_streams:
 
-            driver.get(target)
+        if test_stream(s):
 
-            time.sleep(8)
+            found_stream = s
+            break
 
-            logs = driver.get_log("performance")
 
-            for entry in logs:
+    # Iframe scan
+    if not found_stream:
 
-                msg = json.loads(entry["message"])["message"]
+        targets = get_iframe_sources(driver)
 
-                if msg["method"] != "Network.requestWillBeSent":
-                    continue
+        for target in targets:
 
-                url = msg["params"]["request"]["url"]
+            try:
+                driver.get(target)
+            except:
+                continue
 
-                if ".m3u8" in url:
+            time.sleep(10)
 
-                    if test_stream(url):
+            iframe_streams = extract_m3u8_from_source(driver)
 
-                        found_stream = url
-                        break
+            for s in iframe_streams:
+
+                if test_stream(s):
+
+                    found_stream = s
+                    break
 
             if found_stream:
                 break
 
-        except:
-            pass
+
+    # Network scan
+    if not found_stream:
+
+        logs = driver.get_log("performance")
+
+        for entry in logs:
+
+            msg = json.loads(entry["message"])["message"]
+
+            if msg["method"] != "Network.requestWillBeSent":
+                continue
+
+            url = msg["params"]["request"]["url"]
+
+            if ".m3u8" in url:
+
+                if test_stream(url):
+
+                    found_stream = url
+                    break
+
 
     if found_stream:
 
         streams[name] = found_stream
-
         print("Found:", found_stream)
 
     else:
@@ -160,6 +222,28 @@ for name, page in channels.items():
 driver.quit()
 
 
+# -------------------
+# CDN discovery
+# -------------------
+
+cdn_urls = generate_cdn_candidates()
+
+for url in cdn_urls:
+
+    if test_stream(url):
+
+        name = url.split("/")[3]
+
+        if name not in streams:
+
+            streams[name] = url
+            print("CDN discovered:", name)
+
+
+# -------------------
+# Build playlist
+# -------------------
+
 os.makedirs("playlist", exist_ok=True)
 
 with open("playlist/pakistan.m3u", "w") as f:
@@ -169,7 +253,6 @@ with open("playlist/pakistan.m3u", "w") as f:
     for name, url in streams.items():
 
         f.write(f'#EXTINF:-1 group-title="Pakistan",{name}\n')
-
         f.write(url + "\n")
 
 
