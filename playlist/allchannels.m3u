@@ -1,1 +1,199 @@
-
+#EXTM3U
+#EXTINF:-1 group-title="AT",AVL
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/at/LG/AVL.m3u8
+#EXTINF:-1 group-title="AU",GracefulFamily
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/au/LG/GracefulFamily.m3u8
+#EXTINF:-1 group-title="AU",K-Drama+
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/au/LG/K-Drama+.m3u8
+#EXTINF:-1 group-title="AU",PlayfulKiss
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/au/LG/PlayfulKiss.m3u8
+#EXTINF:-1 group-title="AU",WorldFishingNetwork
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/au/LG/WorldFishingNetwork.m3u8
+#EXTINF:-1 group-title="AU",essential;
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/au/LG/essential;.m3u8
+#EXTINF:-1 group-title="BR",Action
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/AnimeOnegai/Action.m3u8
+#EXTINF:-1 group-title="BR",CindieTV
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/CindieTV.m3u8
+#EXTINF:-1 group-title="BR",Comedy
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/AnimeOnegai/Comedy.m3u8
+#EXTINF:-1 group-title="BR",Drama
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/AnimeOnegai/Drama.m3u8
+#EXTINF:-1 group-title="BR",NEWKMOVIES
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/NEWKMOVIES.m3u8
+#EXTINF:-1 group-title="BR",ROMCOMK-Drama
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/ROMCOMK-Drama.m3u8
+#EXTINF:-1 group-title="BR",SCI-FI
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/AnimeOnegai/SCI-FI.m3u8
+#EXTINF:-1 group-title="BR",Sports
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/AnimeOnegai/Sports.m3u8
+#EXTINF:-1 group-title="BR",WorldBilliardsTV
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/br/LG/WorldBilliardsTV.m3u8
+#EXTINF:-1 group-title="FR",TheHeirs
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/fr/LG/TheHeirs.m3u8
+#EXTINF:-1 group-title="GB",@K-MUSIC
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/gb/LG/@K-MUSIC.m3u8
+#EXTINF:-1 group-title="GB",Kongsuni
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/gb/LG/Kongsuni.m3u8
+#EXTINF:-1 group-title="GB",NEWKMOVIES
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/gb/LG/NEWKMOVIES.m3u8
+#EXTINF:-1 group-title="GB",ROMCOMK-Drama
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/gb/LG/ROMCOMK-Drama.m3u8
+#EXTINF:-1 group-title="GB",TAYO+
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/gb/LG/TAYO+.m3u8
+#EXTINF:-1 group-title="GB",WorldBilliardsTV
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/gb/LG/WorldBilliardsTV.m3u8
+#EXTINF:-1 group-title="GB",YGTV
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/gb/LG/YGTV.m3u8
+#EXTINF:-1 group-title="IN",AnimalPlanetHD
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/MaxDigitalTV/AnimalPlanetHD.m3u8
+#EXTINF:-1 group-title="IN",CartoonNetworkHD+
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/MaxDigitalTV/CartoonNetworkHD+.m3u8
+#EXTINF:-1 group-title="IN",DiscoveryHD
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/MaxDigitalTV/DiscoveryHD.m3u8
+#EXTINF:-1 group-title="IN",DiscoveryScience
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/MaxDigitalTV/DiscoveryScience.m3u8
+#EXTINF:-1 group-title="IN",ETVBalBharat
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/JPRDigital/ETVBalBharat.m3u8
+#EXTINF:-1 group-title="IN",HistoryTV18
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/JPRDigital/HistoryTV18.m3u8
+#EXTINF:-1 group-title="IN",HistoryTV18HD
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/HistoryTV18HD.m3u8
+#EXTINF:-1 group-title="IN",NickJr
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/JPRDigital/NickJr.m3u8
+#EXTINF:-1 group-title="IN",Nickelodeon
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/JPRDigital/Nickelodeon.m3u8
+#EXTINF:-1 group-title="IN",SalaamTV
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/SalaamTV.m3u8
+#EXTINF:-1 group-title="IN",Sonic
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/JPRDigital/Sonic.m3u8
+#EXTINF:-1 group-title="IN",SriSankara
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/SriSankara.m3u8
+#EXTINF:-1 group-title="IN",TLCHD
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/MaxDigitalTV/TLCHD.m3u8
+#EXTINF:-1 group-title="IN",Zee24Ghanta
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/Zee24Ghanta.m3u8
+#EXTINF:-1 group-title="IN",Zee24Kalak
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/Zee24Kalak.m3u8
+#EXTINF:-1 group-title="IN",Zee24Taas
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/Zee24Taas.m3u8
+#EXTINF:-1 group-title="IN",ZeeBharat
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeBharat.m3u8
+#EXTINF:-1 group-title="IN",ZeeBiharJharkhand
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeBiharJharkhand.m3u8
+#EXTINF:-1 group-title="IN",ZeeBusiness
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeBusiness.m3u8
+#EXTINF:-1 group-title="IN",ZeeDelhiNCRHaryana
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeDelhiNCRHaryana.m3u8
+#EXTINF:-1 group-title="IN",ZeeKannadaNews
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeKannadaNews.m3u8
+#EXTINF:-1 group-title="IN",ZeeMPChhattisgarh
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeMPChhattisgarh.m3u8
+#EXTINF:-1 group-title="IN",ZeeMalayalamNews
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeMalayalamNews.m3u8
+#EXTINF:-1 group-title="IN",ZeeNews
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeNews.m3u8
+#EXTINF:-1 group-title="IN",ZeePunjabHaryana
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeePunjabHaryana.m3u8
+#EXTINF:-1 group-title="IN",ZeeRajasthan
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeRajasthan.m3u8
+#EXTINF:-1 group-title="IN",ZeeTamilNews
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeTamilNews.m3u8
+#EXTINF:-1 group-title="IN",ZeeUPUttarakhand
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/in/ZMCL/ZeeUPUttarakhand.m3u8
+#EXTINF:-1 group-title="KR",BoysOverFlowers
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/BoysOverFlowers.m3u8
+#EXTINF:-1 group-title="KR",JTBCNews
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/JTBCNews.m3u8
+#EXTINF:-1 group-title="KR",K-ASMR
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/K-ASMR.m3u8
+#EXTINF:-1 group-title="KR",K-DRAMAbyMBC
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/K-DRAMAbyMBC.m3u8
+#EXTINF:-1 group-title="KR",K-STARGOLF
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/K-STARGOLF.m3u8
+#EXTINF:-1 group-title="KR",LoversOfTheRedSky
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/LoversOfTheRedSky.m3u8
+#EXTINF:-1 group-title="KR",MissingCrownPrince
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/MissingCrownPrince.m3u8
+#EXTINF:-1 group-title="KR",Mubeat
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/Mubeat.m3u8
+#EXTINF:-1 group-title="KR",MyLittlePet
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/MyLittlePet.m3u8
+#EXTINF:-1 group-title="KR",MySassyGirl
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/MySassyGirl.m3u8
+#EXTINF:-1 group-title="KR",MySecretRomance
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/MySecretRomance.m3u8
+#EXTINF:-1 group-title="KR",NEWKFOOD
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/NEWKFOOD.m3u8
+#EXTINF:-1 group-title="KR",RefreshMySoul
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/RefreshMySoul.m3u8
+#EXTINF:-1 group-title="KR",RunningMan
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/RunningMan.m3u8
+#EXTINF:-1 group-title="KR",SBSInkigayo
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/SBSInkigayo.m3u8
+#EXTINF:-1 group-title="KR",SMTOWN
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/SMTOWN.m3u8
+#EXTINF:-1 group-title="KR",ShowChampion
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/ShowChampion.m3u8
+#EXTINF:-1 group-title="KR",SoIMarriedTheAnti-Fan
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/SoIMarriedTheAnti-Fan.m3u8
+#EXTINF:-1 group-title="KR",SomethingInTheRain
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/SomethingInTheRain.m3u8
+#EXTINF:-1 group-title="KR",TheFieryPriest
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/TheFieryPriest.m3u8
+#EXTINF:-1 group-title="KR",UncontrollablyFond
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/UncontrollablyFond.m3u8
+#EXTINF:-1 group-title="KR",WePlay
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/WePlay.m3u8
+#EXTINF:-1 group-title="KR",WeeklyIdol
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/WeeklyIdol.m3u8
+#EXTINF:-1 group-title="KR",WhereStarsLand
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/WhereStarsLand.m3u8
+#EXTINF:-1 group-title="KR",YTN
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/kr/LG/YTN.m3u8
+#EXTINF:-1 group-title="MX",Action
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/AnimeOnegaiES/Action.m3u8
+#EXTINF:-1 group-title="MX",AmorBajoLaLuz
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/AmorBajoLaLuz.m3u8
+#EXTINF:-1 group-title="MX",AmorSecreto
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/AmorSecreto.m3u8
+#EXTINF:-1 group-title="MX",CindieTV
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/CindieTV.m3u8
+#EXTINF:-1 group-title="MX",CocobiES
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/CocobiES.m3u8
+#EXTINF:-1 group-title="MX",Comedy
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/AnimeOnegaiES/Comedy.m3u8
+#EXTINF:-1 group-title="MX",Drama
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/AnimeOnegaiES/Drama.m3u8
+#EXTINF:-1 group-title="MX",ElPesodelAmor
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/ElPesodelAmor.m3u8
+#EXTINF:-1 group-title="MX",Hwarang
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/Hwarang.m3u8
+#EXTINF:-1 group-title="MX",K-DRAMAbyMBC
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/K-DRAMAbyMBC.m3u8
+#EXTINF:-1 group-title="MX",LaLuzEnTusOjos
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/LaLuzEnTusOjos.m3u8
+#EXTINF:-1 group-title="MX",RobocarPoliES
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/RobocarPoliES.m3u8
+#EXTINF:-1 group-title="MX",SCI-FI
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/AnimeOnegaiES/SCI-FI.m3u8
+#EXTINF:-1 group-title="MX",Sports
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/AnimeOnegaiES/Sports.m3u8
+#EXTINF:-1 group-title="MX",TheHeirs
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/TheHeirs.m3u8
+#EXTINF:-1 group-title="MX",UnrealButRealES
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/mx/LG/UnrealButRealES.m3u8
+#EXTINF:-1 group-title="US",Crunchyroll
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/us/LG/Crunchyroll.m3u8
+#EXTINF:-1 group-title="US",GETComedy
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/us/LG/GETComedy.m3u8
+#EXTINF:-1 group-title="US",GameShowCentral
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/us/LG/GameShowCentral.m3u8
+#EXTINF:-1 group-title="US",IAmSOLO
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/us/LG/IAmSOLO.m3u8
+#EXTINF:-1 group-title="US",LoveAfterDivorce
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/us/LG/LoveAfterDivorce.m3u8
+#EXTINF:-1 group-title="US",NEWKPOP
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/us/LG/NEWKPOP.m3u8
+#EXTINF:-1 group-title="US",TheBobRossChannel
+https://raw.githubusercontent.com/amazeyourself/adaptive-streams/main/streams/us/LG/TheBobRossChannel.m3u8
