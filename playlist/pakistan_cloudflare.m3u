@@ -1,0 +1,9 @@
+#EXTM3U
+#EXTINF:-1,Pakistan Channel 1
+https://customer-jfpjrgh1mi5y63cd.cloudflarestream.com/6242aa1ac0506628a643c7136e2214fb/manifest/video.m3u8
+#EXTINF:-1,Pakistan Channel 2
+https://customer-jfpjrgh1mi5y63cd.cloudflarestream.com/42c191950d521798446bb9a6cf870228/manifest/video.m3u8
+#EXTINF:-1,Pakistan Channel 3
+https://customer-jfpjrgh1mi5y63cd.cloudflarestream.com/c4ba0d95cea3149178946b74b1a8677b/manifest/video.m3u8
+#EXTINF:-1,Pakistan Channel 4
+https://customer-jfpjrgh1mi5y63cd.cloudflarestream.com/a8cdec1760604bec35855ccf158563c8/manifest/video.m3u8
