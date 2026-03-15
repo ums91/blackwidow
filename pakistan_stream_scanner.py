@@ -10,11 +10,38 @@ import requests
 
 channels = {
     "PTV Sports": "https://ptvsportshd.com/live",
+    "Geo News": "https://live.geo.tv",
     "ARY Digital": "https://live.arydigital.tv",
     "ARY News": "https://live.arynews.tv",
-    "Geo News": "https://live.geo.tv",
     "Samaa News": "https://www.samaa.tv/live",
-    "Aaj News": "https://www.aaj.tv/live"
+    "Aaj News": "https://www.aaj.tv/live",
+    "Hum News": "https://humnews.pk/live",
+    "Hum TV": "https://hum.tv/live",
+    "Dunya News": "https://dunyanews.tv/live",
+    "GNN": "https://gnnhd.tv/live",
+    "92 News": "https://92newshd.tv/live",
+    "Bol News": "https://www.bolnetwork.com/live",
+    "Express News": "https://express.pk/live",
+    "Harpal Geo": "https://harpalgeo.tv/live",
+    "PTV News": "https://ptv.com.pk/ptvnews/livestream",
+    "PTV Home": "https://ptv.com.pk/ptvhome/livestream",
+    "PTV World": "https://ptv.com.pk/ptvworld/livestream",
+    "PTV Sports Alt": "https://ptv.com.pk/ptvsports/livestream",
+    "Madani Channel": "https://madani.tv/live",
+    "Khyber News": "https://khybernews.tv/live",
+    "Sindh TV": "https://sindhtv.tv/live",
+    "Rohi TV": "https://rohi.tv/live",
+    "Pashto 1": "https://pashto1.tv/live",
+    "City42": "https://city42.tv/live",
+    "City41": "https://city41.tv/live",
+    "City21": "https://city21.tv/live",
+    "Capital TV": "https://capitaltv.pk/live",
+    "Apna TV": "https://apna.tv/live",
+    "Kay2 TV": "https://kay2.tv/live",
+    "8XM": "https://8xm.tv/live",
+    "KTN": "https://ktn.tv/live",
+    "Awaz TV": "https://awaz.tv/live",
+    "Waseb TV": "https://waseb.tv/live"
 }
 
 
@@ -79,11 +106,10 @@ for name, page in channels.items():
 
     driver.get(page)
 
-    time.sleep(8)
+    time.sleep(20)
 
     targets = [page]
 
-    # detect iframe players
     targets += get_iframe_sources(driver)
 
     found_stream = None
