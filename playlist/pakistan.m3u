@@ -1,7 +1,3 @@
 #EXTM3U
-#EXTINF:-1 group-title="Pakistan",ARY Digital
-https://arydigital.aryzap.com/85cda97bc804de52f498ebbe1bfb4441/69b7e1ea/v1/0183ea2408f90b8ed5941a38bc72/0183ea24302d0b8ed5941a38bc75/ARYDigitalHDh264_480p.m3u8
-#EXTINF:-1 group-title="Pakistan",ARY News
-https://arynews.aryzap.com/9dde25035ed35c5bf1b20f5b5f2c66a0/69b7e1fc/v1/0183ea205add0b8ed5941a38bc6f/0183ea20909b0b8ed5aa4d793456/ARYNewsH264_480p.m3u8
 #EXTINF:-1 group-title="Pakistan",Geo News
-https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/chunks.m3u8
+https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/playlist.m3u8
