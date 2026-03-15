@@ -13,3 +13,10 @@ https://imob.dunyanews.tv/livehd/_definst_/ngrp:dunyalivehd_2_all/playlist.m3u8
 https://jk3lz82elw79-hls-live.5centscdn.com/harPalGeo/955ad3298db330b5ee880c2c9e6f23a0.sdp/playlist.m3u8
 #EXTINF:-1 group-title="Pakistan",Madani Channel
 https://jk3lz82elw79-hls-live.5centscdn.com/harPalGeo/955ad3298db330b5ee880c2c9e6f23a0.sdp/playlist.m3u8
+#EXTINF:-1 group-title="Pakistan | Islamic",PTV Sports
+https://customer-jfpjrgh1mi5y63cd.cloudflarestream.com/c4ba0d95cea3149178946b74b1a8677b/manifest/video.m3u8
+#EXTINF:-1 group-title="Pakistan",Geo News
+https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/playlist.m3u8
+#EXTINF:-1 group-title="Pakistan",ARY News
+#EXTVLCOPT:http-referrer=https://live.arynews.tv
+https://arynews.aryzap.com/ea65b565a60c2a137faf9775d139bb15/69b83464/v1/0183ea205add0b8ed5941a38bc6f/0183ea20909b0b8ed5aa4d793456/main.m3u8
