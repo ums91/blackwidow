@@ -8,68 +8,167 @@ import os
 import requests
 import re
 
-channels = {
-    "PTV Sports": "https://ptvsportshd.com/live",
-    "Geo News": "https://live.geo.tv",
-    "ARY Digital": "https://live.arydigital.tv",
-    "ARY News": "https://live.arynews.tv",
-    "Samaa News": "https://www.samaa.tv/live",
-    "Aaj News": "https://www.aaj.tv/live",
-    "Hum News": "https://humnews.pk/live",
-    "Hum TV": "https://hum.tv/live",
-    "Dunya News": "https://dunyanews.tv/live",
-    "GNN": "https://gnnhd.tv/live",
-    "92 News": "https://92newshd.tv/live",
-    "Bol News": "https://www.bolnetwork.com/live",
-    "Express News": "https://express.pk/live",
-}
+
+def discover_live_pages():
+
+    sources = [
+        "https://www.geo.tv",
+        "https://arynews.tv",
+        "https://hum.tv",
+        "https://dunyanews.tv",
+        "https://92newshd.tv",
+        "https://gnnhd.tv",
+        "https://samaa.tv",
+        "https://aaj.tv",
+        "https://express.pk",
+        "https://bolnetwork.com"
+    ]
+
+    discovered = {}
+
+    for site in sources:
+
+        try:
+
+            r = requests.get(site, timeout=6)
+
+            matches = re.findall(r'href="([^"]*live[^"]*)"', r.text)
+
+            for m in matches:
+
+                if not m.startswith("http"):
+                    base = site.rstrip("/")
+                    m = base + m
+
+                name = m.split("/")[2]
+
+                discovered[name] = m
+
+        except:
+            pass
+
+    return discovered
+
+
+channels = discover_live_pages()
+
+
+def fetch_playlist(url):
+    try:
+        r = requests.get(url, timeout=8)
+        if r.status_code == 200 and "#EXTM3U" in r.text:
+            return r.text
+    except:
+        pass
+    return None
 
 
 def test_stream(url):
-    try:
-        r = requests.get(url, timeout=8)
-        if r.status_code == 200:
-            if "#EXTM3U" in r.text or "#EXTINF" in r.text:
-                return True
-    except:
-        pass
+
+    text = fetch_playlist(url)
+
+    if not text:
+        return False
+
+    if "#EXT-X-STREAM-INF" in text:
+        return True
+
+    if "#EXTINF" in text:
+        return True
+
     return False
 
 
+def upgrade_to_master(url):
+
+    base = url.rsplit("/", 1)[0]
+
+    candidates = [
+        base + "/master.m3u8",
+        base + "/playlist.m3u8",
+        base + "/index.m3u8",
+        base + "/main.m3u8"
+    ]
+
+    for c in candidates:
+
+        if test_stream(c):
+            return c
+
+    return url
+
+
+def choose_variant(master_url):
+
+    text = fetch_playlist(master_url)
+
+    if not text:
+        return master_url
+
+    lines = text.splitlines()
+
+    streams = []
+
+    for i, line in enumerate(lines):
+
+        if "#EXT-X-STREAM-INF" in line:
+
+            if i + 1 < len(lines):
+
+                stream_url = lines[i + 1].strip()
+
+                if not stream_url.startswith("http"):
+                    base = master_url.rsplit("/", 1)[0]
+                    stream_url = base + "/" + stream_url
+
+                streams.append(stream_url)
+
+    if not streams:
+        return master_url
+
+    for s in streams:
+        if "480" in s:
+            return s
+
+    for s in streams:
+        if "720" in s:
+            return s
+
+    for s in streams:
+        if "360" in s:
+            return s
+
+    return streams[0]
+
+
 def click_play(driver):
+
+    try:
+        video = driver.find_element(By.TAG_NAME, "video")
+        driver.execute_script("arguments[0].play()", video)
+        return
+    except:
+        pass
+
     selectors = [
         ".vjs-big-play-button",
         ".jw-icon-play",
         ".plyr__control--overlaid",
         ".play-button",
-        "video"
+        "button"
     ]
 
     for sel in selectors:
         try:
-            el = driver.find_element(By.CSS_SELECTOR, sel)
-            driver.execute_script("arguments[0].click();", el)
+            btn = driver.find_element(By.CSS_SELECTOR, sel)
+            btn.click()
             return
         except:
             continue
 
 
-def extract_from_html(driver):
-    streams = set()
+def extract_m3u8_from_logs(driver):
 
-    try:
-        source = driver.page_source
-        matches = re.findall(r'https?://[^"]+\.m3u8[^"]*', source)
-
-        for m in matches:
-            streams.add(m)
-    except:
-        pass
-
-    return streams
-
-
-def extract_from_network(driver):
     streams = set()
 
     logs = driver.get_log("performance")
@@ -78,46 +177,34 @@ def extract_from_network(driver):
 
         msg = json.loads(entry["message"])["message"]
 
-        if msg["method"] == "Network.responseReceived":
+        if msg["method"] != "Network.requestWillBeSent":
+            continue
 
-            url = msg["params"]["response"]["url"]
+        url = msg["params"]["request"]["url"]
 
-            if ".m3u8" in url:
-                streams.add(url)
+        if ".m3u8" in url:
+            streams.add(url)
 
-    return streams
+    return list(streams)
 
 
-def scan_iframes(driver):
+def extract_m3u8_from_source(driver):
 
     streams = set()
 
     try:
 
-        iframes = driver.find_elements(By.TAG_NAME, "iframe")
+        source = driver.page_source
 
-        for frame in iframes:
+        matches = re.findall(r'https?://[^"]+\.m3u8[^"]*', source)
 
-            src = frame.get_attribute("src")
-
-            if not src:
-                continue
-
-            driver.switch_to.frame(frame)
-
-            click_play(driver)
-
-            time.sleep(10)
-
-            streams |= extract_from_html(driver)
-            streams |= extract_from_network(driver)
-
-            driver.switch_to.default_content()
+        for m in matches:
+            streams.add(m)
 
     except:
         pass
 
-    return streams
+    return list(streams)
 
 
 options = webdriver.ChromeOptions()
@@ -131,70 +218,64 @@ options.set_capability(
     {"performance": "ALL"}
 )
 
-
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
     options=options
 )
 
-
 streams = {}
 
 for name, page in channels.items():
 
-    print("Scanning:", name)
+    print("Scanning:", page)
 
     try:
-
         driver.get(page)
 
-        # clear previous logs
         driver.get_log("performance")
 
     except:
-
-        print("Page unreachable")
+        print("Page failed")
         continue
-
 
     time.sleep(6)
 
     click_play(driver)
 
-    time.sleep(20)
+    time.sleep(15)
 
+    candidates = set()
 
-    found = set()
+    candidates.update(extract_m3u8_from_logs(driver))
+    candidates.update(extract_m3u8_from_source(driver))
 
-    found |= extract_from_html(driver)
-    found |= extract_from_network(driver)
-    found |= scan_iframes(driver)
+    candidates = list(candidates)
 
+    found = None
 
-    working = None
+    for c in candidates:
 
-    for url in found:
+        upgraded = upgrade_to_master(c)
 
-        if test_stream(url):
+        if test_stream(upgraded):
 
-            working = url
+            final_stream = choose_variant(upgraded)
+
+            found = final_stream
             break
 
+    if found:
 
-    if working:
-
-        streams[name] = working
-        print("FOUND:", working)
+        streams[name] = found
+        print("Found:", found)
 
     else:
 
-        print("No stream detected")
+        print("No stream found")
 
 
 driver.quit()
 
-
-# Build playlist
 
 os.makedirs("playlist", exist_ok=True)
 
