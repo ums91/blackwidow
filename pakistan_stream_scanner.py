@@ -10,58 +10,60 @@ import re
 
 
 # ----------------------------
+# YouTube Channels
+# ----------------------------
+
+youtube_channels = {
+    "Geo News": "https://www.youtube.com/@geonews/live",
+    "ARY News": "https://www.youtube.com/@arynews/live",
+    "Hum News": "https://www.youtube.com/@HumNewsPK/live",
+    "Dunya News": "https://www.youtube.com/@DunyaNews/live",
+    "Samaa TV": "https://www.youtube.com/@SamaaTV/live",
+    "92 News": "https://www.youtube.com/@92NewsHD/live",
+    "Bol News": "https://www.youtube.com/@BOLNewsofficial/live",
+    "GNN": "https://www.youtube.com/@GNNHD/live",
+    "Aaj News": "https://www.youtube.com/@AajTVofficial/live",
+    "Express News": "https://www.youtube.com/@ExpressNewsPK/live",
+    "PTV News": "https://www.youtube.com/@PTVNewsOfficial/live",
+    "PTV Sports": "https://www.youtube.com/@PTVSportsOfficial/live",
+}
+
+
+# ----------------------------
 # Source discovery
 # ----------------------------
 
 def discover_live_pages():
 
     sources = [
-
-        # GEO Network
         "https://www.geo.tv",
         "https://harpalgeo.tv",
         "https://geokahani.tv",
-
-        # ARY Network
         "https://arynews.tv",
         "https://arydigital.tv",
         "https://aryqtv.tv",
-
-        # HUM Network
         "https://hum.tv",
         "https://humnews.pk",
         "https://humsitaray.tv",
-        "https://hum.tv/masala-tv",   # Hum Masala (Masala TV)
-
-        # Express Network
+        "https://hum.tv/masala-tv",
         "https://express.pk",
         "https://expressentertainment.tv",
-
-        # Major News Networks
         "https://dunyanews.tv",
         "https://92newshd.tv",
         "https://gnnhd.tv",
         "https://samaa.tv",
         "https://aaj.tv",
         "https://bolnetwork.com",
-
-        # Government / PTV
         "https://ptv.com.pk",
         "https://ptv.com.pk/ptvnews",
         "https://ptv.com.pk/ptvsports",
         "https://ptv.com.pk/ptvhome",
-
-        # Regional channels
         "https://khybernews.tv",
         "https://rohi.tv",
         "https://sindhtv.tv",
-
-        # Religious
         "https://madani.tv",
         "https://noortv.pk",
         "https://paighamtv.com",
-
-        # City networks
         "https://city42.tv",
         "https://city41.tv",
         "https://city21.tv",
@@ -70,7 +72,6 @@ def discover_live_pages():
     discovered = {}
 
     for site in sources:
-
         try:
             r = requests.get(site, timeout=6)
 
@@ -140,7 +141,7 @@ channels.update(discover_from_search())
 
 
 # ----------------------------
-# Manifest handling
+# Manifest helpers
 # ----------------------------
 
 def fetch_manifest(url):
@@ -343,6 +344,27 @@ def generate_cdn_candidates():
 
 
 # ----------------------------
+# YouTube extraction
+# ----------------------------
+
+def extract_youtube_stream(url):
+
+    try:
+
+        r = requests.get(url, timeout=8)
+
+        matches = re.findall(r'https://manifest\.googlevideo\.com[^"]+\.m3u8[^"]*', r.text)
+
+        if matches:
+            return matches[0]
+
+    except:
+        pass
+
+    return None
+
+
+# ----------------------------
 # Selenium setup
 # ----------------------------
 
@@ -435,6 +457,24 @@ for url in cdn_urls:
 
             streams[name] = url
             print("CDN discovered:", name)
+
+
+# ----------------------------
+# YouTube discovery
+# ----------------------------
+
+for name, url in youtube_channels.items():
+
+    print("Checking YouTube:", name)
+
+    stream = extract_youtube_stream(url)
+
+    if stream:
+
+        if name not in streams:
+
+            streams[name] = stream
+            print("YouTube stream found:", stream)
 
 
 # ----------------------------
