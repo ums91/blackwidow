@@ -1,5 +1,7 @@
 #EXTM3U
 #EXTINF:-1 group-title="Pakistan",Geo News
 https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/chunks.m3u8
+#EXTINF:-1 group-title="Pakistan",ARY News
+https://arynewsm.aryzap.com/v1/0183ef4f7c260b8ed5941a38bc84/0183ef4fadde0b8ed5941a38bc87/main.m3u8
 #EXTINF:-1 group-title="Pakistan",Dunya News
-https://imob.dunyanews.tv/livehd/_definst_/ngrp:dunyalivehd_2_all/playlist.m3u8
+https://imob.dunyanews.tv/livehd/_definst_/ngrp:dunyalivehd_2_all/chunklist_w1515498047_b950272.m3u8
