@@ -12,16 +12,54 @@ import re
 def discover_live_pages():
 
     sources = [
+
+        # GEO Network
         "https://www.geo.tv",
+        "https://harpalgeo.tv",
+        "https://geokahani.tv",
+
+        # ARY Network
         "https://arynews.tv",
+        "https://arydigital.tv",
+        "https://aryqtv.tv",
+
+        # HUM Network
         "https://hum.tv",
+        "https://humnews.pk",
+        "https://humsitaray.tv",
+
+        # Express Network
+        "https://express.pk",
+        "https://expressentertainment.tv",
+
+        # Major News Networks
         "https://dunyanews.tv",
         "https://92newshd.tv",
         "https://gnnhd.tv",
         "https://samaa.tv",
         "https://aaj.tv",
-        "https://express.pk",
-        "https://bolnetwork.com"
+        "https://bolnetwork.com",
+
+        # Government / PTV
+        "https://ptv.com.pk",
+        "https://ptv.com.pk/ptvnews",
+        "https://ptv.com.pk/ptvsports",
+        "https://ptv.com.pk/ptvhome",
+
+        # Regional channels
+        "https://khybernews.tv",
+        "https://rohi.tv",
+        "https://sindhtv.tv",
+
+        # Religious channels
+        "https://madani.tv",
+        "https://noortv.pk",
+        "https://paighamtv.com",
+
+        # City news networks
+        "https://city42.tv",
+        "https://city41.tv",
+        "https://city21.tv",
     ]
 
     discovered = {}
