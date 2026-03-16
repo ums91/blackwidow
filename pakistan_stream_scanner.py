@@ -9,6 +9,10 @@ import requests
 import re
 
 
+# ----------------------------
+# Source discovery
+# ----------------------------
+
 def discover_live_pages():
 
     sources = [
@@ -27,6 +31,7 @@ def discover_live_pages():
         "https://hum.tv",
         "https://humnews.pk",
         "https://humsitaray.tv",
+        "https://hum.tv/masala-tv",   # Hum Masala (Masala TV)
 
         # Express Network
         "https://express.pk",
@@ -51,12 +56,12 @@ def discover_live_pages():
         "https://rohi.tv",
         "https://sindhtv.tv",
 
-        # Religious channels
+        # Religious
         "https://madani.tv",
         "https://noortv.pk",
         "https://paighamtv.com",
 
-        # City news networks
+        # City networks
         "https://city42.tv",
         "https://city41.tv",
         "https://city21.tv",
@@ -65,6 +70,7 @@ def discover_live_pages():
     discovered = {}
 
     for site in sources:
+
         try:
             r = requests.get(site, timeout=6)
 
@@ -85,8 +91,57 @@ def discover_live_pages():
     return discovered
 
 
-channels = discover_live_pages()
+# ----------------------------
+# Search discovery
+# ----------------------------
 
+def discover_from_search():
+
+    queries = [
+        "site:geo.tv live",
+        "site:arynews.tv live",
+        "site:hum.tv live",
+        "site:dunyanews.tv live",
+        "site:samaa.tv live",
+        "site:aaj.tv live",
+        "site:express.pk live",
+        "site:bolnetwork.com live",
+        "site:ptv.com.pk live",
+        "pakistan tv live stream"
+    ]
+
+    discovered = {}
+
+    for q in queries:
+
+        try:
+            url = f"https://duckduckgo.com/html/?q={q}"
+
+            r = requests.get(url, timeout=8)
+
+            matches = re.findall(r'href="(https?://[^"]+)"', r.text)
+
+            for m in matches:
+
+                if "live" in m:
+
+                    name = m.split("/")[2]
+
+                    discovered[name] = m
+
+        except:
+            pass
+
+    return discovered
+
+
+channels = discover_live_pages()
+channels.update(discover_from_search())
+
+
+# ----------------------------
+# Manifest handling
+# ----------------------------
 
 def fetch_manifest(url):
 
@@ -109,15 +164,11 @@ def test_stream(url):
     if not text:
         return False
 
-    if url.endswith(".m3u8"):
+    if url.endswith(".m3u8") and "#EXTM3U" in text:
+        return True
 
-        if "#EXTM3U" in text:
-            return True
-
-    if url.endswith(".mpd"):
-
-        if "<MPD" in text:
-            return True
+    if url.endswith(".mpd") and "<MPD" in text:
+        return True
 
     return False
 
@@ -162,15 +213,13 @@ def choose_variant(master_url):
 
         if "#EXT-X-STREAM-INF" in line:
 
-            if i + 1 < len(lines):
+            stream = lines[i + 1].strip()
 
-                stream = lines[i + 1].strip()
+            if not stream.startswith("http"):
+                base = master_url.rsplit("/", 1)[0]
+                stream = base + "/" + stream
 
-                if not stream.startswith("http"):
-                    base = master_url.rsplit("/", 1)[0]
-                    stream = base + "/" + stream
-
-                streams.append(stream)
+            streams.append(stream)
 
     if not streams:
         return master_url
@@ -183,12 +232,12 @@ def choose_variant(master_url):
         if "720" in s:
             return s
 
-    for s in streams:
-        if "360" in s:
-            return s
-
     return streams[0]
 
+
+# ----------------------------
+# Player interaction
+# ----------------------------
 
 def click_play(driver):
 
@@ -202,13 +251,19 @@ def click_play(driver):
     ]
 
     for sel in selectors:
+
         try:
             el = driver.find_element(By.CSS_SELECTOR, sel)
             driver.execute_script("arguments[0].click();", el)
             return
+
         except:
             continue
 
+
+# ----------------------------
+# Stream extraction
+# ----------------------------
 
 def extract_from_network(driver):
 
@@ -253,6 +308,44 @@ def extract_from_source(driver):
     return list(streams)
 
 
+# ----------------------------
+# CDN discovery
+# ----------------------------
+
+def generate_cdn_candidates():
+
+    slugs = [
+        "geonews","harpalgeo","arynews","arydigital","aryqtv",
+        "humtv","humnews","dunyanews","expressnews","bolnews",
+        "aajnews","samaanews","92news","gnn","ptvsports"
+    ]
+
+    hosts = [
+        "https://cdn-live.streamlock.net",
+        "https://5centscdn.streamlock.net",
+        "https://edge.streamlock.net"
+    ]
+
+    playlists = [
+        "playlist.m3u8",
+        "index.m3u8",
+        "master.m3u8"
+    ]
+
+    urls = []
+
+    for h in hosts:
+        for s in slugs:
+            for p in playlists:
+                urls.append(f"{h}/{s}/{s}/{p}")
+
+    return urls
+
+
+# ----------------------------
+# Selenium setup
+# ----------------------------
+
 options = webdriver.ChromeOptions()
 
 options.add_argument("--headless=new")
@@ -270,18 +363,20 @@ driver = webdriver.Chrome(
 
 streams = {}
 
+
+# ----------------------------
+# Website scanning
+# ----------------------------
+
 for name, page in channels.items():
 
     print("Scanning:", page)
 
     try:
-
         driver.get(page)
-
         driver.get_log("performance")
 
     except:
-
         print("Page failed")
         continue
 
@@ -323,6 +418,28 @@ for name, page in channels.items():
 
 driver.quit()
 
+
+# ----------------------------
+# CDN discovery
+# ----------------------------
+
+cdn_urls = generate_cdn_candidates()
+
+for url in cdn_urls:
+
+    if test_stream(url):
+
+        name = url.split("/")[3]
+
+        if name not in streams:
+
+            streams[name] = url
+            print("CDN discovered:", name)
+
+
+# ----------------------------
+# Build playlist
+# ----------------------------
 
 os.makedirs("playlist", exist_ok=True)
 
