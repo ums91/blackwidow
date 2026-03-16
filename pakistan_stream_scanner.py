@@ -29,13 +29,16 @@ def discover_live_pages():
     for site in sources:
         try:
             r = requests.get(site, timeout=6)
+
             matches = re.findall(r'href="([^"]*live[^"]*)"', r.text)
 
             for m in matches:
+
                 if not m.startswith("http"):
                     m = site.rstrip("/") + m
 
                 name = m.split("/")[2]
+
                 discovered[name] = m
 
         except:
@@ -47,12 +50,12 @@ def discover_live_pages():
 channels = discover_live_pages()
 
 
-def fetch_playlist(url):
+def fetch_manifest(url):
 
     try:
         r = requests.get(url, timeout=8)
 
-        if r.status_code == 200 and "#EXTM3U" in r.text:
+        if r.status_code == 200:
             return r.text
 
     except:
@@ -63,21 +66,28 @@ def fetch_playlist(url):
 
 def test_stream(url):
 
-    text = fetch_playlist(url)
+    text = fetch_manifest(url)
 
     if not text:
         return False
 
-    if "#EXT-X-STREAM-INF" in text:
-        return True
+    if url.endswith(".m3u8"):
 
-    if "#EXTINF" in text:
-        return True
+        if "#EXTM3U" in text:
+            return True
+
+    if url.endswith(".mpd"):
+
+        if "<MPD" in text:
+            return True
 
     return False
 
 
 def upgrade_to_master(url):
+
+    if not url.endswith(".m3u8"):
+        return url
 
     base = url.rsplit("/", 1)[0]
 
@@ -89,6 +99,7 @@ def upgrade_to_master(url):
     ]
 
     for c in candidates:
+
         if test_stream(c):
             return c
 
@@ -97,12 +108,16 @@ def upgrade_to_master(url):
 
 def choose_variant(master_url):
 
-    text = fetch_playlist(master_url)
+    if not master_url.endswith(".m3u8"):
+        return master_url
+
+    text = fetch_manifest(master_url)
 
     if not text:
         return master_url
 
     lines = text.splitlines()
+
     streams = []
 
     for i, line in enumerate(lines):
@@ -157,7 +172,7 @@ def click_play(driver):
             continue
 
 
-def extract_from_cdp(driver):
+def extract_from_network(driver):
 
     streams = set()
 
@@ -171,7 +186,7 @@ def extract_from_cdp(driver):
 
             url = msg["params"]["response"]["url"]
 
-            if ".m3u8" in url:
+            if ".m3u8" in url or ".mpd" in url:
                 streams.add(url)
 
     return list(streams)
@@ -182,10 +197,16 @@ def extract_from_source(driver):
     streams = set()
 
     try:
-        source = driver.page_source
-        matches = re.findall(r'https?://[^"]+\.m3u8[^"]*', source)
 
-        for m in matches:
+        source = driver.page_source
+
+        m3u = re.findall(r'https?://[^"]+\.m3u8[^"]*', source)
+        mpd = re.findall(r'https?://[^"]+\.mpd[^"]*', source)
+
+        for m in m3u:
+            streams.add(m)
+
+        for m in mpd:
             streams.add(m)
 
     except:
@@ -234,7 +255,7 @@ for name, page in channels.items():
 
     candidates = set()
 
-    candidates.update(extract_from_cdp(driver))
+    candidates.update(extract_from_network(driver))
     candidates.update(extract_from_source(driver))
 
     candidates = list(candidates)
