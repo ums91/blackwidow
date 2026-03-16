@@ -27,21 +27,15 @@ def discover_live_pages():
     discovered = {}
 
     for site in sources:
-
         try:
-
             r = requests.get(site, timeout=6)
-
             matches = re.findall(r'href="([^"]*live[^"]*)"', r.text)
 
             for m in matches:
-
                 if not m.startswith("http"):
-                    base = site.rstrip("/")
-                    m = base + m
+                    m = site.rstrip("/") + m
 
                 name = m.split("/")[2]
-
                 discovered[name] = m
 
         except:
@@ -54,12 +48,16 @@ channels = discover_live_pages()
 
 
 def fetch_playlist(url):
+
     try:
         r = requests.get(url, timeout=8)
+
         if r.status_code == 200 and "#EXTM3U" in r.text:
             return r.text
+
     except:
         pass
+
     return None
 
 
@@ -91,7 +89,6 @@ def upgrade_to_master(url):
     ]
 
     for c in candidates:
-
         if test_stream(c):
             return c
 
@@ -106,7 +103,6 @@ def choose_variant(master_url):
         return master_url
 
     lines = text.splitlines()
-
     streams = []
 
     for i, line in enumerate(lines):
@@ -115,13 +111,13 @@ def choose_variant(master_url):
 
             if i + 1 < len(lines):
 
-                stream_url = lines[i + 1].strip()
+                stream = lines[i + 1].strip()
 
-                if not stream_url.startswith("http"):
+                if not stream.startswith("http"):
                     base = master_url.rsplit("/", 1)[0]
-                    stream_url = base + "/" + stream_url
+                    stream = base + "/" + stream
 
-                streams.append(stream_url)
+                streams.append(stream)
 
     if not streams:
         return master_url
@@ -143,31 +139,25 @@ def choose_variant(master_url):
 
 def click_play(driver):
 
-    try:
-        video = driver.find_element(By.TAG_NAME, "video")
-        driver.execute_script("arguments[0].play()", video)
-        return
-    except:
-        pass
-
     selectors = [
         ".vjs-big-play-button",
         ".jw-icon-play",
         ".plyr__control--overlaid",
         ".play-button",
-        "button"
+        "button",
+        "video"
     ]
 
     for sel in selectors:
         try:
-            btn = driver.find_element(By.CSS_SELECTOR, sel)
-            btn.click()
+            el = driver.find_element(By.CSS_SELECTOR, sel)
+            driver.execute_script("arguments[0].click();", el)
             return
         except:
             continue
 
 
-def extract_m3u8_from_logs(driver):
+def extract_from_cdp(driver):
 
     streams = set()
 
@@ -177,25 +167,22 @@ def extract_m3u8_from_logs(driver):
 
         msg = json.loads(entry["message"])["message"]
 
-        if msg["method"] != "Network.requestWillBeSent":
-            continue
+        if msg["method"] == "Network.responseReceived":
 
-        url = msg["params"]["request"]["url"]
+            url = msg["params"]["response"]["url"]
 
-        if ".m3u8" in url:
-            streams.add(url)
+            if ".m3u8" in url:
+                streams.add(url)
 
     return list(streams)
 
 
-def extract_m3u8_from_source(driver):
+def extract_from_source(driver):
 
     streams = set()
 
     try:
-
         source = driver.page_source
-
         matches = re.findall(r'https?://[^"]+\.m3u8[^"]*', source)
 
         for m in matches:
@@ -213,15 +200,14 @@ options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 
-options.set_capability(
-    "goog:loggingPrefs",
-    {"performance": "ALL"}
-)
+options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
 
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
     options=options
 )
+
 
 streams = {}
 
@@ -230,11 +216,13 @@ for name, page in channels.items():
     print("Scanning:", page)
 
     try:
+
         driver.get(page)
 
         driver.get_log("performance")
 
     except:
+
         print("Page failed")
         continue
 
@@ -242,12 +230,12 @@ for name, page in channels.items():
 
     click_play(driver)
 
-    time.sleep(15)
+    time.sleep(18)
 
     candidates = set()
 
-    candidates.update(extract_m3u8_from_logs(driver))
-    candidates.update(extract_m3u8_from_source(driver))
+    candidates.update(extract_from_cdp(driver))
+    candidates.update(extract_from_source(driver))
 
     candidates = list(candidates)
 
