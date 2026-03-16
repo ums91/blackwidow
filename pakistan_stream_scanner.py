@@ -24,6 +24,7 @@ channels = {
     "Express News": "https://express.pk/live",
 }
 
+
 def test_stream(url):
     try:
         r = requests.get(url, timeout=8)
@@ -36,36 +37,39 @@ def test_stream(url):
 
 
 def click_play(driver):
-    """
-    Try multiple ways to trigger player playback
-    """
-
-    try:
-        video = driver.find_element(By.TAG_NAME, "video")
-        driver.execute_script("arguments[0].play()", video)
-        return
-    except:
-        pass
-
     selectors = [
-        "button",
         ".vjs-big-play-button",
         ".jw-icon-play",
         ".plyr__control--overlaid",
-        ".play-button"
+        ".play-button",
+        "video"
     ]
 
     for sel in selectors:
         try:
-            btn = driver.find_element(By.CSS_SELECTOR, sel)
-            btn.click()
+            el = driver.find_element(By.CSS_SELECTOR, sel)
+            driver.execute_script("arguments[0].click();", el)
             return
         except:
             continue
 
 
-def extract_m3u8_from_logs(driver):
+def extract_from_html(driver):
+    streams = set()
 
+    try:
+        source = driver.page_source
+        matches = re.findall(r'https?://[^"]+\.m3u8[^"]*', source)
+
+        for m in matches:
+            streams.add(m)
+    except:
+        pass
+
+    return streams
+
+
+def extract_from_network(driver):
     streams = set()
 
     logs = driver.get_log("performance")
@@ -74,15 +78,46 @@ def extract_m3u8_from_logs(driver):
 
         msg = json.loads(entry["message"])["message"]
 
-        if msg["method"] != "Network.requestWillBeSent":
-            continue
+        if msg["method"] == "Network.responseReceived":
 
-        url = msg["params"]["request"]["url"]
+            url = msg["params"]["response"]["url"]
 
-        if ".m3u8" in url:
-            streams.add(url)
+            if ".m3u8" in url:
+                streams.add(url)
 
-    return list(streams)
+    return streams
+
+
+def scan_iframes(driver):
+
+    streams = set()
+
+    try:
+
+        iframes = driver.find_elements(By.TAG_NAME, "iframe")
+
+        for frame in iframes:
+
+            src = frame.get_attribute("src")
+
+            if not src:
+                continue
+
+            driver.switch_to.frame(frame)
+
+            click_play(driver)
+
+            time.sleep(10)
+
+            streams |= extract_from_html(driver)
+            streams |= extract_from_network(driver)
+
+            driver.switch_to.default_content()
+
+    except:
+        pass
+
+    return streams
 
 
 options = webdriver.ChromeOptions()
@@ -96,10 +131,12 @@ options.set_capability(
     {"performance": "ALL"}
 )
 
+
 driver = webdriver.Chrome(
     service=Service(ChromeDriverManager().install()),
     options=options
 )
+
 
 streams = {}
 
@@ -108,41 +145,57 @@ for name, page in channels.items():
     print("Scanning:", name)
 
     try:
+
         driver.get(page)
+
+        # clear previous logs
+        driver.get_log("performance")
+
     except:
-        print("Page failed")
+
+        print("Page unreachable")
         continue
 
-    # wait page load
+
     time.sleep(6)
 
-    # click play
     click_play(driver)
 
-    # wait stream request
-    time.sleep(15)
+    time.sleep(20)
 
-    candidates = extract_m3u8_from_logs(driver)
 
-    found = None
+    found = set()
 
-    for c in candidates:
+    found |= extract_from_html(driver)
+    found |= extract_from_network(driver)
+    found |= scan_iframes(driver)
 
-        if test_stream(c):
-            found = c
+
+    working = None
+
+    for url in found:
+
+        if test_stream(url):
+
+            working = url
             break
 
-    if found:
-        streams[name] = found
-        print("Found:", found)
+
+    if working:
+
+        streams[name] = working
+        print("FOUND:", working)
+
     else:
-        print("No stream found")
+
+        print("No stream detected")
 
 
 driver.quit()
 
 
 # Build playlist
+
 os.makedirs("playlist", exist_ok=True)
 
 with open("playlist/pakistan.m3u", "w") as f:
