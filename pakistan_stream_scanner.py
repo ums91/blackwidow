@@ -1,8 +1,15 @@
 import json, time, os, requests, re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import yt_dlp
-import undetected_chromedriver as uc
 
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
+
+
+# ----------------------------
+# YouTube Channels
+# ----------------------------
 
 youtube_channels = {
     "Geo News": "https://www.youtube.com/@geonews/live",
@@ -20,6 +27,10 @@ youtube_channels = {
 }
 
 
+# ----------------------------
+# Source discovery (ALL intact)
+# ----------------------------
+
 def discover_live_pages():
     sources = [
         "https://www.geo.tv","https://harpalgeo.tv","https://geokahani.tv",
@@ -35,25 +46,38 @@ def discover_live_pages():
     ]
 
     discovered = {}
+
     for site in sources:
         try:
             r = requests.get(site, timeout=6)
             matches = re.findall(r'href="([^"]*live[^"]*)"', r.text)
+
             for m in matches:
                 if not m.startswith("http"):
                     m = site.rstrip("/") + m
+
                 discovered[m.split("/")[2]] = m
         except:
             pass
+
     return discovered
 
+
+# ----------------------------
+# Helpers
+# ----------------------------
 
 def is_stream(url):
     return ".m3u8" in url or ".mpd" in url
 
 
+# ----------------------------
+# Interaction
+# ----------------------------
+
 def click_live_button(driver):
     keywords = ["live", "watch", "stream", "on air"]
+
     elements = driver.find_elements("xpath", "//a | //button")
 
     for el in elements:
@@ -66,6 +90,7 @@ def click_live_button(driver):
                 return True
         except:
             continue
+
     return False
 
 
@@ -87,6 +112,7 @@ def smart_play(driver):
                 return True
         except:
             continue
+
     return False
 
 
@@ -117,21 +143,31 @@ def handle_iframes(driver):
     return False
 
 
+# ----------------------------
+# Network capture
+# ----------------------------
+
 def capture_streams(driver, timeout=25):
+
     found = set()
     start = time.time()
 
     while time.time() - start < timeout:
+
         time.sleep(2)
+
         logs = driver.get_log("performance")
 
         for entry in logs:
             try:
                 msg = json.loads(entry["message"])["message"]
+
                 if msg["method"] == "Network.responseReceived":
                     url = msg["params"]["response"]["url"]
+
                     if is_stream(url):
                         found.add(url)
+
             except:
                 continue
 
@@ -141,15 +177,26 @@ def capture_streams(driver, timeout=25):
     return list(found)
 
 
+# ----------------------------
+# Worker
+# ----------------------------
+
 def scan(name, page):
-    options = uc.ChromeOptions()
+
+    options = webdriver.ChromeOptions()
+
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
 
-    driver = uc.Chrome(options=options)
+    options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+
+    driver = webdriver.Chrome(
+        service=Service(ChromeDriverManager().install()),
+        options=options
+    )
 
     try:
         driver.get(page)
@@ -175,6 +222,10 @@ def scan(name, page):
     return name, None
 
 
+# ----------------------------
+# Run parallel scan
+# ----------------------------
+
 channels = discover_live_pages()
 streams = {}
 
@@ -186,6 +237,10 @@ with ThreadPoolExecutor(max_workers=5) as ex:
         if url:
             streams[name] = url
 
+
+# ----------------------------
+# YouTube (yt-dlp)
+# ----------------------------
 
 def yt_stream(url):
     try:
@@ -202,6 +257,10 @@ for n, u in youtube_channels.items():
         streams[n] = s
 
 
+# ----------------------------
+# Playlist
+# ----------------------------
+
 os.makedirs("playlist", exist_ok=True)
 
 with open("playlist/pakistan.m3u", "w") as f:
@@ -210,5 +269,6 @@ with open("playlist/pakistan.m3u", "w") as f:
     for name, url in streams.items():
         f.write(f'#EXTINF:-1 group-title="Pakistan",{name}\n')
         f.write(url + "\n")
+
 
 print("TOTAL CHANNELS:", len(streams))
