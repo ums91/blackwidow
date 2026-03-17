@@ -1,32 +1,25 @@
 name: Pakistan IPTV Streams
 
 on:
-  workflow_dispatch:   # ✅ manual trigger only
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
+      - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - run: pip install -r requirements.txt
 
-      # Required for Selenium
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+      - uses: browser-actions/setup-chrome@v1
 
-      - name: Run stream scanner
-        run: python pakistan_stream_scanner.py
+      - run: python pakistan_stream_scanner.py
 
-      # Optional but recommended → keeps playlist updated in repo
       - name: Commit playlist
         run: |
           git config --global user.name "github-actions"
