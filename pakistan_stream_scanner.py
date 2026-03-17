@@ -4,10 +4,6 @@ import yt_dlp
 import undetected_chromedriver as uc
 
 
-# ----------------------------
-# YouTube Channels
-# ----------------------------
-
 youtube_channels = {
     "Geo News": "https://www.youtube.com/@geonews/live",
     "ARY News": "https://www.youtube.com/@arynews/live",
@@ -23,10 +19,6 @@ youtube_channels = {
     "PTV Sports": "https://www.youtube.com/@PTVSportsOfficial/live",
 }
 
-
-# ----------------------------
-# Sources (ALL intact)
-# ----------------------------
 
 def discover_live_pages():
     sources = [
@@ -56,21 +48,12 @@ def discover_live_pages():
     return discovered
 
 
-# ----------------------------
-# Helpers
-# ----------------------------
-
 def is_stream(url):
     return ".m3u8" in url or ".mpd" in url
 
 
-# ----------------------------
-# Interaction Layer
-# ----------------------------
-
 def click_live_button(driver):
     keywords = ["live", "watch", "stream", "on air"]
-
     elements = driver.find_elements("xpath", "//a | //button")
 
     for el in elements:
@@ -80,7 +63,6 @@ def click_live_button(driver):
                 driver.execute_script("arguments[0].scrollIntoView(true);", el)
                 time.sleep(1)
                 driver.execute_script("arguments[0].click();", el)
-                print("▶ Clicked:", text)
                 return True
         except:
             continue
@@ -111,17 +93,15 @@ def smart_play(driver):
 def handle_iframes(driver):
     iframes = driver.find_elements("tag name", "iframe")
 
-    for i, frame in enumerate(iframes):
+    for frame in iframes:
         try:
             driver.switch_to.frame(frame)
-            print("🔁 iframe", i)
 
             if smart_play(driver):
                 return True
 
-            # nested iframe
             inner = driver.find_elements("tag name", "iframe")
-            for j, f in enumerate(inner):
+            for f in inner:
                 try:
                     driver.switch_to.frame(f)
                     if smart_play(driver):
@@ -131,39 +111,27 @@ def handle_iframes(driver):
                     continue
 
             driver.switch_to.default_content()
-
         except:
             driver.switch_to.default_content()
 
     return False
 
 
-# ----------------------------
-# Network Capture
-# ----------------------------
-
 def capture_streams(driver, timeout=25):
-
     found = set()
     start = time.time()
 
     while time.time() - start < timeout:
-
         time.sleep(2)
-
         logs = driver.get_log("performance")
 
         for entry in logs:
             try:
                 msg = json.loads(entry["message"])["message"]
-
                 if msg["method"] == "Network.responseReceived":
                     url = msg["params"]["response"]["url"]
-
                     if is_stream(url):
-                        print("🎯", url)
                         found.add(url)
-
             except:
                 continue
 
@@ -173,14 +141,7 @@ def capture_streams(driver, timeout=25):
     return list(found)
 
 
-# ----------------------------
-# Worker
-# ----------------------------
-
 def scan(name, page):
-
-    print("\n🔎", page)
-
     options = uc.ChromeOptions()
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
@@ -214,10 +175,6 @@ def scan(name, page):
     return name, None
 
 
-# ----------------------------
-# Parallel scan
-# ----------------------------
-
 channels = discover_live_pages()
 streams = {}
 
@@ -229,10 +186,6 @@ with ThreadPoolExecutor(max_workers=5) as ex:
         if url:
             streams[name] = url
 
-
-# ----------------------------
-# YouTube via yt-dlp
-# ----------------------------
 
 def yt_stream(url):
     try:
@@ -249,10 +202,6 @@ for n, u in youtube_channels.items():
         streams[n] = s
 
 
-# ----------------------------
-# Playlist
-# ----------------------------
-
 os.makedirs("playlist", exist_ok=True)
 
 with open("playlist/pakistan.m3u", "w") as f:
@@ -262,5 +211,4 @@ with open("playlist/pakistan.m3u", "w") as f:
         f.write(f'#EXTINF:-1 group-title="Pakistan",{name}\n')
         f.write(url + "\n")
 
-
-print("\n🚀 TOTAL:", len(streams))
+print("TOTAL CHANNELS:", len(streams))
