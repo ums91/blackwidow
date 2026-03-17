@@ -1,9 +1,7 @@
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 import json, time, os, requests, re
 from concurrent.futures import ThreadPoolExecutor, as_completed
 import yt_dlp
+import undetected_chromedriver as uc
 
 
 # ----------------------------
@@ -27,61 +25,34 @@ youtube_channels = {
 
 
 # ----------------------------
-# FULL Source discovery (unchanged)
+# Sources (ALL intact)
 # ----------------------------
 
 def discover_live_pages():
-
     sources = [
-        "https://www.geo.tv",
-        "https://harpalgeo.tv",
-        "https://geokahani.tv",
-        "https://arynews.tv",
-        "https://arydigital.tv",
-        "https://aryqtv.tv",
-        "https://hum.tv",
-        "https://humnews.pk",
-        "https://humsitaray.tv",
-        "https://hum.tv/masala-tv",
-        "https://express.pk",
-        "https://expressentertainment.tv",
-        "https://dunyanews.tv",
-        "https://92newshd.tv",
-        "https://gnnhd.tv",
-        "https://samaa.tv",
-        "https://aaj.tv",
-        "https://bolnetwork.com",
-        "https://ptv.com.pk",
-        "https://ptv.com.pk/ptvnews",
-        "https://ptv.com.pk/ptvsports",
-        "https://ptv.com.pk/ptvhome",
-        "https://khybernews.tv",
-        "https://rohi.tv",
-        "https://sindhtv.tv",
-        "https://madani.tv",
-        "https://noortv.pk",
-        "https://paighamtv.com",
-        "https://city42.tv",
-        "https://city41.tv",
-        "https://city21.tv",
+        "https://www.geo.tv","https://harpalgeo.tv","https://geokahani.tv",
+        "https://arynews.tv","https://arydigital.tv","https://aryqtv.tv",
+        "https://hum.tv","https://humnews.pk","https://humsitaray.tv",
+        "https://hum.tv/masala-tv","https://express.pk","https://expressentertainment.tv",
+        "https://dunyanews.tv","https://92newshd.tv","https://gnnhd.tv",
+        "https://samaa.tv","https://aaj.tv","https://bolnetwork.com",
+        "https://ptv.com.pk","https://ptv.com.pk/ptvnews","https://ptv.com.pk/ptvsports",
+        "https://ptv.com.pk/ptvhome","https://khybernews.tv","https://rohi.tv",
+        "https://sindhtv.tv","https://madani.tv","https://noortv.pk",
+        "https://paighamtv.com","https://city42.tv","https://city41.tv","https://city21.tv",
     ]
 
     discovered = {}
-
     for site in sources:
         try:
             r = requests.get(site, timeout=6)
             matches = re.findall(r'href="([^"]*live[^"]*)"', r.text)
-
             for m in matches:
                 if not m.startswith("http"):
                     m = site.rstrip("/") + m
-
                 discovered[m.split("/")[2]] = m
-
         except:
             pass
-
     return discovered
 
 
@@ -94,11 +65,10 @@ def is_stream(url):
 
 
 # ----------------------------
-# 🔥 Interaction Layer
+# Interaction Layer
 # ----------------------------
 
 def click_live_button(driver):
-
     keywords = ["live", "watch", "stream", "on air"]
 
     elements = driver.find_elements("xpath", "//a | //button")
@@ -106,71 +76,57 @@ def click_live_button(driver):
     for el in elements:
         try:
             text = (el.text or "").lower()
-
             if any(k in text for k in keywords):
                 driver.execute_script("arguments[0].scrollIntoView(true);", el)
                 time.sleep(1)
                 driver.execute_script("arguments[0].click();", el)
-                print("▶ Clicked live button:", text)
+                print("▶ Clicked:", text)
                 return True
         except:
             continue
-
     return False
 
 
 def smart_play(driver):
-
     try:
         driver.execute_script("document.querySelector('video')?.play()")
     except:
         pass
 
     selectors = [
-        ".vjs-big-play-button",
-        ".jw-icon-play",
-        ".plyr__control--overlaid",
-        ".ytp-large-play-button",
-        "button"
+        ".vjs-big-play-button",".jw-icon-play",
+        ".plyr__control--overlaid",".ytp-large-play-button","button"
     ]
 
     for sel in selectors:
         try:
-            elements = driver.find_elements("css selector", sel)
-            for el in elements:
+            for el in driver.find_elements("css selector", sel):
                 driver.execute_script("arguments[0].click();", el)
-                print("▶ Clicked:", sel)
                 return True
         except:
             continue
-
     return False
 
 
-def handle_iframes_and_play(driver):
-
+def handle_iframes(driver):
     iframes = driver.find_elements("tag name", "iframe")
 
     for i, frame in enumerate(iframes):
         try:
             driver.switch_to.frame(frame)
-            print(f"🔁 Switched iframe {i}")
+            print("🔁 iframe", i)
 
             if smart_play(driver):
                 return True
 
-            inner_iframes = driver.find_elements("tag name", "iframe")
-
-            for j, inner in enumerate(inner_iframes):
+            # nested iframe
+            inner = driver.find_elements("tag name", "iframe")
+            for j, f in enumerate(inner):
                 try:
-                    driver.switch_to.frame(inner)
-                    print(f"🔁 Nested iframe {i}.{j}")
-
+                    driver.switch_to.frame(f)
                     if smart_play(driver):
                         return True
-
                     driver.switch_to.parent_frame()
-
                 except:
                     continue
 
@@ -178,13 +134,12 @@ def handle_iframes_and_play(driver):
 
         except:
             driver.switch_to.default_content()
-            continue
 
     return False
 
 
 # ----------------------------
-# 🔥 Network capture
+# Network Capture
 # ----------------------------
 
 def capture_streams(driver, timeout=25):
@@ -206,7 +161,7 @@ def capture_streams(driver, timeout=25):
                     url = msg["params"]["response"]["url"]
 
                     if is_stream(url):
-                        print("🎯 Found:", url)
+                        print("🎯", url)
                         found.add(url)
 
             except:
@@ -219,23 +174,21 @@ def capture_streams(driver, timeout=25):
 
 
 # ----------------------------
-# Selenium worker
+# Worker
 # ----------------------------
 
-def scan_channel(name, page):
+def scan(name, page):
 
-    print(f"\n🔎 Scanning: {page}")
+    print("\n🔎", page)
 
-    options = webdriver.ChromeOptions()
+    options = uc.ChromeOptions()
     options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
 
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
-    )
+    driver = uc.Chrome(options=options)
 
     try:
         driver.get(page)
@@ -247,12 +200,12 @@ def scan_channel(name, page):
         time.sleep(3)
 
         smart_play(driver)
-        handle_iframes_and_play(driver)
+        handle_iframes(driver)
 
-        candidates = capture_streams(driver)
+        streams = capture_streams(driver)
 
-        if candidates:
-            return name, candidates[0]
+        if streams:
+            return name, streams[0]
 
     except:
         pass
@@ -262,55 +215,42 @@ def scan_channel(name, page):
 
 
 # ----------------------------
-# Run parallel scanning
+# Parallel scan
 # ----------------------------
 
 channels = discover_live_pages()
 streams = {}
 
-with ThreadPoolExecutor(max_workers=5) as executor:
-    futures = [executor.submit(scan_channel, n, p) for n, p in channels.items()]
+with ThreadPoolExecutor(max_workers=5) as ex:
+    futures = [ex.submit(scan, n, p) for n, p in channels.items()]
 
     for f in as_completed(futures):
-        name, stream = f.result()
-        if stream:
-            streams[name] = stream
+        name, url = f.result()
+        if url:
+            streams[name] = url
 
 
 # ----------------------------
 # YouTube via yt-dlp
 # ----------------------------
 
-def extract_youtube(url):
+def yt_stream(url):
     try:
-        ydl_opts = {"quiet": True, "skip_download": True}
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with yt_dlp.YoutubeDL({"quiet": True}) as ydl:
             info = ydl.extract_info(url, download=False)
-
-            if "url" in info:
-                return info["url"]
-
-            if "formats" in info:
-                for f in info["formats"]:
-                    if f.get("protocol") == "m3u8":
-                        return f.get("url")
-
+            return info.get("url")
     except:
-        pass
-
-    return None
+        return None
 
 
-for name, url in youtube_channels.items():
-    print("▶ YouTube:", name)
-    s = extract_youtube(url)
+for n, u in youtube_channels.items():
+    s = yt_stream(u)
     if s:
-        streams[name] = s
-        print("✅ YouTube OK")
+        streams[n] = s
 
 
 # ----------------------------
-# Build playlist
+# Playlist
 # ----------------------------
 
 os.makedirs("playlist", exist_ok=True)
@@ -323,4 +263,4 @@ with open("playlist/pakistan.m3u", "w") as f:
         f.write(url + "\n")
 
 
-print("\n🚀 TOTAL CHANNELS:", len(streams))
+print("\n🚀 TOTAL:", len(streams))
