@@ -1,7 +1,13 @@
 #EXTM3U
+#EXTINF:-1 group-title="Pakistan",harpalgeo.tv
+https://jk3lz82elw79-hls-live.5centscdn.com/harPalGeo/955ad3298db330b5ee880c2c9e6f23a0.sdp/playlist.m3u8
+#EXTINF:-1 group-title="Pakistan",live.arynews.tv
+https://arynews.aryzap.com/2e0bdf20bf95c10326b37335b934bb3c/69baad06/v1/0183ea205add0b8ed5941a38bc6f/0183ea20909b0b8ed5aa4d793456/ARYNewsH264_480p.m3u8?uuid=8eb4dc5f-1b2e-48a2-9efc-ef00dc3059d6&isSubM3u8=1
 #EXTINF:-1 group-title="Pakistan",live.geo.tv
 https://jk3lz82elw79-hls-live.5centscdn.com/newgeonews/07811dc6c422334ce36a09ff5cd6fe71.sdp/chunks.m3u8
-#EXTINF:-1 group-title="Pakistan",harpalgeo.tv
-https://jk3lz82elw79-hls-live.5centscdn.com/harPalGeo/955ad3298db330b5ee880c2c9e6f23a0.sdp/chunks.m3u8
 #EXTINF:-1 group-title="Pakistan",dunyanews.tv
-https://imob.dunyanews.tv/livehd/_definst_/ngrp:dunyalivehd_2_all/chunklist_w857458550_b950272.m3u8
+https://prd.jwpltx.com/v1/jwplayer6/ping.gif?h=656316344&e=s&n=2998189338696613&abc=1&aid=dhIN3Oq%2BEeKRUiIACqoQEQ&amp=0&ask=2cOd67Gv&at=1&c=1&ccp=0&cp=0&d=1&eb=0&ed=3&emi=qqb8jk1t42hu&i=0&lid=1wws5yhkvy9p&lsa=set&mt=1&pbd=1&pbr=1&pgi=t6ht8idjy73j&ph=1&pid=BR5L6Pnh&pii=0&pl=548&plc=1&pli=1oasm89vy2oy&pp=hlsjs&ppm=LIVE&prc=1&ps=4&pss=1&pt=Dunya%20News%20Live%20-%20Dunya%20Tv%20Live%20-%20Live%20Streaming%20Dunya%20News%20TV%20-%20dunyanews.tv&pu=https%3A%2F%2Fdunyanews.tv%2Flive&pv=8.46.0&pyc=1&s=1&sdk=0&stc=1&stpe=0&t=DUNYA%20LIVE&tv=4.0.10-14&vb=1&vi=1&vl=90&wd=974&abm=1&bwe=5000&cae=0&cct=0&ch=2&cdid=dunyalive&drm=0&ff=2710&fsm=0&l=0&lng=en&mk=hls&mu=https%3A%2F%2Fimob.dunyanews.tv%2Flivehd%2F_definst_%2Fngrp%3Adunyalivehd_2_all%2Fplaylist.m3u8&pcp=0&pd=3&pdr=&plng=en&pni=1&pr=2&q=0&qcr=initial%20choice&sbr=950&sp=0&strt=3350&tb=12&tt=0&vd=0&vh=720&vs=5&vw=1280&sa=1773755337318
+#EXTINF:-1 group-title="Pakistan",sindhtv.tv
+https://stream77.duckdns.org/hls/stream1.m3u8
+#EXTINF:-1 group-title="Pakistan",www.madanitv.net
+https://prd.jwpltx.com/v1/jwplayer6/ping.gif?h=1735659147&e=pa&n=4689925564359892&aid=gz_FBsVMEeWiQBKCk4Wcgw&amp=0&at=1&c=-1&ccp=0&cp=0&d=1&eb=0&ed=6&emi=7gc2n7aea1y3&i=0&lid=12gpttt14qjm&lsa=read&mt=1&pbd=1&pbr=1&pgi=1achmum131gz&ph=1&pid=IDzF9Zmk&pii=0&pl=641&plc=1&pli=19obzds1teju&pp=hlsjs&prc=1&ps=4&pss=1&pt=Live%20Streaming%20-%20MadaniTV&pu=http%3A%2F%2Fmadanitv.net%2Flivestream&pv=8.46.0&pyc=0&s=0&sdk=0&stc=1&stpe=0&tv=4.0.10-14&vb=1&vi=1&vl=25&wd=1140&ab=0&bwe=4532&cme=0&flc=0&lng=id&mu=https%3A%2F%2Fstream.asianastream.com%2Fmadani%2Fmadanitv.smil%2Fplaylist.m3u8&pd=2&pdr=http%3A%2F%2Fmadanitv.net%2F&plng=id&pni=0&pogt=Live%20Streaming%20-%20MadaniTV&pr=2&tb=0&vd=0&sa=1773755394866
