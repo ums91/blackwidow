@@ -31,7 +31,7 @@ youtube_channels = {
 
 def discover_live_pages():
     sources = [
-        "https://www.geo.tv","https://harpalgeo.tv","https://geokahani.tv",
+        "https://www.geo.tv","https://live.arydigital.tv","https://webtv.92newshd.tv","https://www.express.pk/live","https://humnews.pk/live","https://harpalgeo.tv","https://geokahani.tv",
         "https://arynews.tv","https://arydigital.tv","https://aryqtv.tv",
         "https://hum.tv","https://humnews.pk","https://humsitaray.tv",
         "https://hum.tv/masala-tv","https://express.pk","https://expressentertainment.tv",
