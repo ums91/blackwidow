@@ -3,8 +3,6 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 import yt_dlp
 
 from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
 
 
 # ----------------------------
@@ -28,7 +26,7 @@ youtube_channels = {
 
 
 # ----------------------------
-# Source discovery (ALL intact)
+# Sources (ALL intact)
 # ----------------------------
 
 def discover_live_pages():
@@ -46,7 +44,6 @@ def discover_live_pages():
     ]
 
     discovered = {}
-
     for site in sources:
         try:
             r = requests.get(site, timeout=6)
@@ -55,17 +52,12 @@ def discover_live_pages():
             for m in matches:
                 if not m.startswith("http"):
                     m = site.rstrip("/") + m
-
                 discovered[m.split("/")[2]] = m
         except:
             pass
 
     return discovered
 
-
-# ----------------------------
-# Helpers
-# ----------------------------
 
 def is_stream(url):
     return ".m3u8" in url or ".mpd" in url
@@ -78,9 +70,7 @@ def is_stream(url):
 def click_live_button(driver):
     keywords = ["live", "watch", "stream", "on air"]
 
-    elements = driver.find_elements("xpath", "//a | //button")
-
-    for el in elements:
+    for el in driver.find_elements("xpath", "//a | //button"):
         try:
             text = (el.text or "").lower()
             if any(k in text for k in keywords):
@@ -90,7 +80,6 @@ def click_live_button(driver):
                 return True
         except:
             continue
-
     return False
 
 
@@ -112,24 +101,20 @@ def smart_play(driver):
                 return True
         except:
             continue
-
     return False
 
 
 def handle_iframes(driver):
-    iframes = driver.find_elements("tag name", "iframe")
-
-    for frame in iframes:
+    for frame in driver.find_elements("tag name", "iframe"):
         try:
             driver.switch_to.frame(frame)
 
             if smart_play(driver):
                 return True
 
-            inner = driver.find_elements("tag name", "iframe")
-            for f in inner:
+            for inner in driver.find_elements("tag name", "iframe"):
                 try:
-                    driver.switch_to.frame(f)
+                    driver.switch_to.frame(inner)
                     if smart_play(driver):
                         return True
                     driver.switch_to.parent_frame()
@@ -148,26 +133,19 @@ def handle_iframes(driver):
 # ----------------------------
 
 def capture_streams(driver, timeout=25):
-
     found = set()
     start = time.time()
 
     while time.time() - start < timeout:
-
         time.sleep(2)
 
-        logs = driver.get_log("performance")
-
-        for entry in logs:
+        for entry in driver.get_log("performance"):
             try:
                 msg = json.loads(entry["message"])["message"]
-
                 if msg["method"] == "Network.responseReceived":
                     url = msg["params"]["response"]["url"]
-
                     if is_stream(url):
                         found.add(url)
-
             except:
                 continue
 
@@ -178,11 +156,10 @@ def capture_streams(driver, timeout=25):
 
 
 # ----------------------------
-# Worker
+# Driver factory (stable)
 # ----------------------------
 
-def scan(name, page):
-
+def create_driver():
     options = webdriver.ChromeOptions()
 
     options.add_argument("--headless=new")
@@ -193,10 +170,24 @@ def scan(name, page):
 
     options.set_capability("goog:loggingPrefs", {"performance": "ALL"})
 
-    driver = webdriver.Chrome(
-        service=Service(ChromeDriverManager().install()),
-        options=options
-    )
+    for _ in range(3):
+        try:
+            return webdriver.Chrome(options=options)
+        except:
+            time.sleep(2)
+
+    return None
+
+
+# ----------------------------
+# Worker
+# ----------------------------
+
+def scan(name, page):
+
+    driver = create_driver()
+    if not driver:
+        return name, None
 
     try:
         driver.get(page)
@@ -223,7 +214,7 @@ def scan(name, page):
 
 
 # ----------------------------
-# Run parallel scan
+# Run parallel
 # ----------------------------
 
 channels = discover_live_pages()
@@ -239,7 +230,7 @@ with ThreadPoolExecutor(max_workers=5) as ex:
 
 
 # ----------------------------
-# YouTube (yt-dlp)
+# YouTube
 # ----------------------------
 
 def yt_stream(url):
