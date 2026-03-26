@@ -39,7 +39,7 @@ def discover_live_pages():
         "https://samaa.tv","https://aaj.tv","https://bolnetwork.com",
         "https://ptv.com.pk","https://ptv.com.pk/ptvnews","https://ptv.com.pk/ptvsports",
         "https://ptv.com.pk/ptvhome","https://khybernews.tv","https://rohi.tv",
-        "https://sindhtv.tv","https://madani.tv","https://noortv.pk",
+        "https://sindhtv.tv","https://madani.tv","https://noortv.pk","https://ptvsportshd.com/live",
         "https://paighamtv.com","https://city42.tv","https://city41.tv","https://city21.tv",
     ]
 
